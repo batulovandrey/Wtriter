@@ -32,6 +32,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetViewHolder> {
     public void onBindViewHolder(TweetViewHolder holder, int position) {
         Tweet tweet = mTweets.get(position);
         holder.mTweetTextView.setText(tweet.text);
+        holder.mUserNameTextView.setText(tweet.user.name);
     }
 
     @Override

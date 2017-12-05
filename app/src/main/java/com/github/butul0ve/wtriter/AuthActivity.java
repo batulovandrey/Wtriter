@@ -36,6 +36,7 @@ public class AuthActivity extends AppCompatActivity {
                 String userName = result.data.getUserName();
                 String hello = "hello, " + userName + "!";
                 Toast.makeText(getApplicationContext(), hello, Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getApplicationContext(), TweetsActivity.class));
             }
 
             @Override

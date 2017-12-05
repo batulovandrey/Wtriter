@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Wtriter</string>
+    <string name="title_activity_tweets">TweetsActivity</string>
 </resources>

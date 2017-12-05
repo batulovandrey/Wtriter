@@ -13,9 +13,11 @@ import com.github.butul0ve.wtriter.R;
 public final class TweetViewHolder extends RecyclerView.ViewHolder {
 
     TextView mTweetTextView;
+    TextView mUserNameTextView;
 
     public TweetViewHolder(View itemView) {
         super(itemView);
         mTweetTextView = itemView.findViewById(R.id.tweet_text_view);
+        mUserNameTextView = itemView.findViewById(R.id.user_name_text_view);
     }
 }
