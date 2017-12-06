@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetui.FixedTweetTimeline;
 import com.twitter.sdk.android.tweetui.SearchTimeline;
+import com.twitter.sdk.android.tweetui.TimelineResult;
 import com.twitter.sdk.android.tweetui.TweetTimelineRecyclerViewAdapter;
 
 import java.util.List;
@@ -36,6 +38,8 @@ public class SearchFragment extends Fragment {
     private String mQuery;
     private OnFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TweetTimelineRecyclerViewAdapter mAdapter;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -60,9 +64,9 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         return view;
     }
 
@@ -74,6 +78,27 @@ public class SearchFragment extends Fragment {
         } else {
             loadTweetsFromFeed();
         }
+        initSwipeRefresh();
+    }
+
+    private void initSwipeRefresh() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                mAdapter.refresh(new Callback<TimelineResult<Tweet>>() {
+                    @Override
+                    public void success(Result<TimelineResult<Tweet>> result) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void failure(TwitterException exception) {
+                        Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,11 +129,11 @@ public class SearchFragment extends Fragment {
         SearchTimeline searchTimeline = new SearchTimeline.Builder()
                 .query(query)
                 .build();
-        final TweetTimelineRecyclerViewAdapter adapter = new TweetTimelineRecyclerViewAdapter.Builder(getContext())
+        mAdapter = new TweetTimelineRecyclerViewAdapter.Builder(getContext())
                 .setTimeline(searchTimeline)
                 .setViewStyle(R.style.tw__TweetDarkWithActionsStyle)
                 .build();
-        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void loadTweetsFromFeed() {
@@ -123,11 +148,11 @@ public class SearchFragment extends Fragment {
                     final FixedTweetTimeline homeTimeline = new FixedTweetTimeline.Builder()
                             .setTweets(result.data)
                             .build();
-                    final TweetTimelineRecyclerViewAdapter adapter = new TweetTimelineRecyclerViewAdapter.Builder(getContext())
+                    mAdapter = new TweetTimelineRecyclerViewAdapter.Builder(getContext())
                             .setTimeline(homeTimeline)
                             .setViewStyle(R.style.tw__TweetDarkWithActionsStyle)
                             .build();
-                    mRecyclerView.setAdapter(adapter);
+                    mRecyclerView.setAdapter(mAdapter);
                 } else {
                     Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
                 }
