@@ -26,7 +26,12 @@
         <activity
             android:name=".TweetsActivity"
             android:label="@string/title_activity_tweets"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".AddTweetActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

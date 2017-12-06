@@ -31,11 +31,13 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/add_new_tweet_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:backgroundTint="@color/tw__solid_white"
+        app:borderWidth="0dp"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:src="@drawable/plus" />
 
 </android.support.design.widget.CoordinatorLayout>
