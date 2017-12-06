@@ -3,17 +3,19 @@ package com.github.butul0ve.wtriter;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-import io.fabric.sdk.android.Fabric;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -25,8 +27,12 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TwitterAuthConfig config = new TwitterAuthConfig(CONSUMER_KEY, CONSUMER_SECRET);
-        Fabric.with(this, new TwitterCore(config));
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig(CONSUMER_KEY, CONSUMER_SECRET))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
         setContentView(R.layout.activity_auth);
 
         twitterLoginButton = findViewById(R.id.twitter_login_button);

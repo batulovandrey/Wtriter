@@ -1,11 +1,12 @@
 package com.github.butul0ve.wtriter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.StatusesService;
+import com.twitter.sdk.android.tweetui.UserTimeline;
 
 import java.util.List;
 
@@ -25,28 +27,41 @@ public class TweetsActivity extends AppCompatActivity {
 
     private TweetsAdapter mTweetsAdapter;
     private RecyclerView mRecyclerView;
+    FloatingActionButton mAddNewTweetFloatActionButton;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweets);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRecyclerView = findViewById(R.id.recycler_view);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mAddNewTweetFloatActionButton = findViewById(R.id.add_new_tweet_action_button);
+        mAddNewTweetFloatActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(getApplicationContext(), AddTweetActivity.class));
             }
         });
 
         loadTweets();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return false;
+    }
+
     private void loadTweets() {
         final StatusesService service = TwitterCore.getInstance().getApiClient().getStatusesService();
+
         Call<List<Tweet>> listCall = service
                 .homeTimeline(10, null, null, null, null, null, null);
         listCall.enqueue(new Callback<List<Tweet>>() {
