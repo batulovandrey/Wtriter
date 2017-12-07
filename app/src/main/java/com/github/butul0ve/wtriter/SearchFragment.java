@@ -14,24 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.butul0ve.wtriter.adapter.TweetAdapter;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.models.Search;
-import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.services.SearchService;
-import com.twitter.sdk.android.core.services.StatusesService;
-
-import java.util.List;
-
-import retrofit2.Call;
+import com.github.butul0ve.wtriter.presenter.MainPresenter;
+import com.github.butul0ve.wtriter.presenter.MainPresenterImpl;
+import com.github.butul0ve.wtriter.view.MainView;
 
 /**
  * @author Andrey Batulov on 06.12.17
  */
 
-public class SearchFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class SearchFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MainView {
 
     private static final String EXTRA_QUERY = "param1";
 
@@ -39,10 +30,11 @@ public class SearchFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private OnFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TweetAdapter mAdapter;
+    private MainPresenter mMainPresenter;
 
     public SearchFragment() {
         // Required empty public constructor
+        mMainPresenter = new MainPresenterImpl(this);
     }
 
     public static SearchFragment newInstance(String query) {
@@ -74,11 +66,7 @@ public class SearchFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mQuery != null && mQuery.length() > 0) {
-            loadTweets(mQuery);
-        } else {
-            loadTweetsFromFeed();
-        }
+        mMainPresenter.getData(mQuery);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -115,59 +103,20 @@ public class SearchFragment extends Fragment implements SwipeRefreshLayout.OnRef
         });
     }
 
+    @Override
+    public void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateData(TweetAdapter adapter) {
+        mRecyclerView.setAdapter(adapter);
+    }
+
     private void loadRecyclerViewData() {
         mSwipeRefreshLayout.setRefreshing(true);
-        if (mQuery != null) {
-            loadTweets(mQuery);
-        } else {
-            loadTweetsFromFeed();
-        }
+        mMainPresenter.getData(mQuery);
         mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    private void loadTweets(String query) {
-        final SearchService service = TwitterCore.getInstance().getApiClient().getSearchService();
-        Call<Search> call = service.tweets(query, null, null, null, null, null, null, null, null, null);
-        call.enqueue(new Callback<Search>() {
-            @Override
-            public void success(Result<Search> result) {
-                if (result != null) {
-                    mAdapter = new TweetAdapter(result.data.tweets);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else {
-                    Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
-
-    private void loadTweetsFromFeed() {
-        final StatusesService service = TwitterCore.getInstance().getApiClient().getStatusesService();
-
-        Call<List<Tweet>> call = service
-                .homeTimeline(10, null, null, null, null, null, null);
-        call.enqueue(new Callback<List<Tweet>>() {
-            @Override
-            public void success(Result<List<Tweet>> result) {
-                if (result.data != null) {
-                    mAdapter = new TweetAdapter(result.data);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else {
-                    Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
 
