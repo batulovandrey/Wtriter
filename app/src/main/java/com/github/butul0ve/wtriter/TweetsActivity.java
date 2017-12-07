@@ -17,7 +17,8 @@ import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
-public class TweetsActivity extends AppCompatActivity implements SearchFragment.OnFragmentInteractionListener  {
+public class TweetsActivity extends AppCompatActivity
+        implements SearchFragment.OnFragmentInteractionListener, View.OnClickListener, SearchView.OnQueryTextListener {
 
     private FloatingActionButton mAddNewTweetFloatActionButton;
     private FloatingActionButton mShowSearchButton;
@@ -31,7 +32,6 @@ public class TweetsActivity extends AppCompatActivity implements SearchFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweets);
         initUI();
-
         loadTweets();
     }
 
@@ -45,34 +45,15 @@ public class TweetsActivity extends AppCompatActivity implements SearchFragment.
         return false;
     }
 
-    private void initUI() {
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mShowSearchButton = findViewById(R.id.show_search_button);
-        mShowSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mToolbar.getVisibility() == View.GONE) {
-                    mToolbar.setVisibility(View.VISIBLE);
-                } else {
-                    mToolbar.setVisibility(View.GONE);
-                }
-            }
-        });
-        mShowMyFeedButton = findViewById(R.id.show_my_feed_button);
-        mShowMyFeedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadTweets();
-            }
-        });
-        mFrameLayout = findViewById(R.id.frame_layout);
-        initSearchView();
-        mAddNewTweetFloatActionButton = findViewById(R.id.add_new_tweet_action_button);
-        mAddNewTweetFloatActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.add_new_tweet_action_button: {
                 final TwitterSession session = TwitterCore.getInstance().getSessionManager()
                         .getActiveSession();
                 final Intent intent = new ComposerActivity.Builder(getApplicationContext())
@@ -81,29 +62,64 @@ public class TweetsActivity extends AppCompatActivity implements SearchFragment.
                         .darkTheme()
                         .createIntent();
                 startActivity(intent);
+                break;
             }
-        });
+            case R.id.show_my_feed_button: {
+                loadTweets();
+                break;
+            }
+            case R.id.show_search_button: {
+                if (mToolbar.getVisibility() == View.GONE) {
+                    mToolbar.setVisibility(View.VISIBLE);
+                } else {
+                    mToolbar.setVisibility(View.GONE);
+                }
+                break;
+            }
+        }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if (query.length() > 0) {
+            loadTweetsByUserQuery(query);
+            mSearchView.clearFocus();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    private void initUI() {
+        initToolbar();
+        initButtons();
+        mFrameLayout = findViewById(R.id.frame_layout);
+        initSearchView();
+    }
+
+    private void initToolbar() {
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initButtons() {
+        mShowSearchButton = findViewById(R.id.show_search_button);
+        mShowSearchButton.setOnClickListener(this);
+        mShowMyFeedButton = findViewById(R.id.show_my_feed_button);
+        mShowMyFeedButton.setOnClickListener(this);
+        mAddNewTweetFloatActionButton = findViewById(R.id.add_new_tweet_action_button);
+        mAddNewTweetFloatActionButton.setOnClickListener(this);
     }
 
     private void initSearchView() {
         mSearchView = findViewById(R.id.search_view);
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 0) {
-                    loadTweetsByUserQuery(query);
-                    mSearchView.clearFocus();
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
+        mSearchView.setOnQueryTextListener(this);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     }
 
@@ -115,10 +131,5 @@ public class TweetsActivity extends AppCompatActivity implements SearchFragment.
     private void loadTweets() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, new SearchFragment()).commit();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }
