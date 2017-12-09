@@ -28,14 +28,23 @@ public class MainModel {
         this.mMainPresenter = mMainPresenter;
     }
 
-    public void getSearchAdapter(String query) {
-        final SearchService service = TwitterCore.getInstance().getApiClient().getSearchService();
-        Call<Search> call = service.tweets(query, null, null, null, null, null, null, null, null, null);
-        call.enqueue(new Callback<Search>() {
+    public void getData(String query) {
+        if (query == null) {
+            getFeed();
+        } else {
+            getTweetsByQuery(query);
+        }
+    }
+
+    private void getFeed() {
+        final StatusesService service = TwitterCore.getInstance().getApiClient().getStatusesService();
+        Call<List<Tweet>> call = service
+                .homeTimeline(10, null, null, null, null, null, null);
+        call.enqueue(new Callback<List<Tweet>>() {
             @Override
-            public void success(Result<Search> result) {
-                if (result != null) {
-                    mAdapter = new TweetAdapter(result.data.tweets);
+            public void success(Result<List<Tweet>> result) {
+                if (result.data != null) {
+                    mAdapter = new TweetAdapter(result.data);
                     mAdapter.notifyDataSetChanged();
                     mMainPresenter.updateData(mAdapter);
                 } else {
@@ -51,15 +60,14 @@ public class MainModel {
         });
     }
 
-    public void getFeedAdapter() {
-        final StatusesService service = TwitterCore.getInstance().getApiClient().getStatusesService();
-        Call<List<Tweet>> call = service
-                .homeTimeline(10, null, null, null, null, null, null);
-        call.enqueue(new Callback<List<Tweet>>() {
+    private void getTweetsByQuery(String query) {
+        final SearchService service = TwitterCore.getInstance().getApiClient().getSearchService();
+        Call<Search> call = service.tweets(query, null, null, null, null, null, null, null, null, null);
+        call.enqueue(new Callback<Search>() {
             @Override
-            public void success(Result<List<Tweet>> result) {
-                if (result.data != null) {
-                    mAdapter = new TweetAdapter(result.data);
+            public void success(Result<Search> result) {
+                if (result != null) {
+                    mAdapter = new TweetAdapter(result.data.tweets);
                     mAdapter.notifyDataSetChanged();
                     mMainPresenter.updateData(mAdapter);
                 } else {

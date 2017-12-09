@@ -25,10 +25,7 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void getData(String query) {
-        if (query != null && query.length() > 0) {
-            mMainModel.getSearchAdapter(query);
-        }
-        mMainModel.getFeedAdapter();
+        mMainModel.getData(query);
     }
 
     @Override
