@@ -1,10 +1,9 @@
 package com.github.butul0ve.wtriter;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -53,12 +52,8 @@ public class AuthActivity extends AppCompatActivity {
             }
         });
         mDontHaveAccountButton = findViewById(R.id.dont_have_account_button);
-        mDontHaveAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), TweetsActivity.class));
-            }
-        });
+        mDontHaveAccountButton.setOnClickListener(view ->
+                startActivity(new Intent(getApplicationContext(), TweetsActivity.class)));
     }
 
     @Override

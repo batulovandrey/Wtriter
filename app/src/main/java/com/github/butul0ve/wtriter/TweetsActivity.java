@@ -89,7 +89,11 @@ public class TweetsActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onQueryTextChange(String newText) {
+    public boolean onQueryTextChange(String query) {
+        if (query.length() > 0) {
+            loadTweetsByUserQuery(query);
+            return true;
+        }
         return false;
     }
 

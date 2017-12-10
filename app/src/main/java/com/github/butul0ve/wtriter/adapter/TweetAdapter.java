@@ -18,10 +18,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetViewHolder> {
 
     private List<Tweet> mTweets;
 
-    public TweetAdapter(List<Tweet> mTweets) {
-        this.mTweets = mTweets;
-    }
-
     @Override
     public TweetViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tweet, parent, false);
@@ -38,5 +34,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetViewHolder> {
     @Override
     public int getItemCount() {
         return mTweets == null ? 0 : mTweets.size();
+    }
+
+    public void setTweets(List<Tweet> tweets) {
+        mTweets = tweets;
+        notifyDataSetChanged();
     }
 }
