@@ -32,7 +32,6 @@ public class TweetsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweets);
         initUI();
-        loadTweets();
     }
 
     @Override

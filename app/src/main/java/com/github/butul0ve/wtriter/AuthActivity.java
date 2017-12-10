@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.twitter.sdk.android.core.Callback;
@@ -22,8 +24,8 @@ public class AuthActivity extends AppCompatActivity {
     public static final String CONSUMER_KEY = "jnfp0krLC3mqzxlug4Gb8Zq9x";
     public static final String CONSUMER_SECRET = "vKkQMgUEkkO3c3WW6VPDNStjxup8NpZFnYuAAwIdBjpK6M0Id8";
 
-    private TwitterLoginButton twitterLoginButton;
-
+    private TwitterLoginButton mTwitterLoginButton;
+    private Button mDontHaveAccountButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +37,8 @@ public class AuthActivity extends AppCompatActivity {
         Twitter.initialize(config);
         setContentView(R.layout.activity_auth);
 
-        twitterLoginButton = findViewById(R.id.twitter_login_button);
-        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+        mTwitterLoginButton = findViewById(R.id.twitter_login_button);
+        mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 String userName = result.data.getUserName();
@@ -50,12 +52,19 @@ public class AuthActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG).show();
             }
         });
+        mDontHaveAccountButton = findViewById(R.id.dont_have_account_button);
+        mDontHaveAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), TweetsActivity.class));
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        mTwitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

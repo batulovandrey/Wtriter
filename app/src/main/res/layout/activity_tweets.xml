@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,32 +18,31 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:visibility="gone"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <android.support.v7.widget.SearchView
                 android:id="@+id/search_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_tweets" />
+    <include layout="@layout/content_tweets"/>
 
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <RelativeLayout
-        android:padding="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:background="@color/transparent">
+        android:background="@color/transparent"
+        android:padding="4dp">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/show_my_feed_button"
@@ -52,7 +52,7 @@
             android:layout_alignParentStart="true"
             android:backgroundTint="@color/tw__solid_white"
             android:src="@drawable/feed"
-            app:borderWidth="0dp" />
+            app:borderWidth="0dp"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/show_search_button"
@@ -61,7 +61,7 @@
             android:layout_centerHorizontal="true"
             android:backgroundTint="@color/tw__solid_white"
             android:src="@drawable/search"
-            app:borderWidth="0dp" />
+            app:borderWidth="0dp"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_new_tweet_action_button"
@@ -71,6 +71,6 @@
             android:layout_alignParentRight="true"
             android:backgroundTint="@color/tw__solid_white"
             android:src="@drawable/plus"
-            app:borderWidth="0dp" />
+            app:borderWidth="0dp"/>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
