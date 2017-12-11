@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.butul0ve.wtriter.R;
+import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.models.Tweet;
 
 import java.util.List;
@@ -29,6 +30,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetViewHolder> {
         Tweet tweet = mTweets.get(position);
         holder.mUserNameTextView.setText(tweet.user.name);
         holder.mTweetTextView.setText(tweet.text);
+        holder.mCountLikesTextView.setText(String.valueOf(tweet.favoriteCount));
+        String imageUrl = tweet.user.profileImageUrl;
+        Picasso.with(holder.itemView.getContext())
+                .load(imageUrl)
+                .resize(48, 48)
+                .into(holder.mAvatarImageView);
     }
 
     @Override
